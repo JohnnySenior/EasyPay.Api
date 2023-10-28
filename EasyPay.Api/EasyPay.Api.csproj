@@ -7,6 +7,7 @@
   <ItemGroup>
     <PackageReference Include="DeepCloner" Version="0.10.4" />
     <PackageReference Include="EFxceptions" Version="0.4.5" />
+    <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="7.0.13" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="7.0.12">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
@@ -19,6 +20,7 @@
     <PackageReference Include="Moq" Version="4.20.69" />
     <PackageReference Include="RESTFulSense" Version="2.15.0" />
     <PackageReference Include="Swashbuckle.AspNetCore" Version="5.6.3" />
+    <PackageReference Include="Swashbuckle.AspNetCore.Filters" Version="7.0.12" />
     <PackageReference Include="Tynamix.ObjectFiller" Version="1.5.8" />
     <PackageReference Include="Xeption" Version="2.5.0" />
   </ItemGroup>

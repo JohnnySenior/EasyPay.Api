@@ -6,6 +6,7 @@
 using EasyPay.Api.Models.Accounts;
 using EasyPay.Api.Models.Accounts.Exceptions;
 using EasyPay.Api.Services.Processings.Accounts;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using RESTFulSense.Controllers;
 using System;
@@ -14,6 +15,7 @@ using System.Threading.Tasks;
 
 namespace EasyPay.Api.Controllers
 {
+    [Authorize]
     [ApiController]
     [Route("api/[controller]")]
     public class AccountController : RESTFulController

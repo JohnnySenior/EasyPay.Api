@@ -5,7 +5,9 @@
 
 using EasyPay.Api.Models.Clients;
 using EasyPay.Api.Models.Clients.Exceptions;
+using EasyPay.Api.Services.Foundations.Clients;
 using EasyPay.Api.Services.Processings.Clients;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using RESTFulSense.Controllers;
 using System;
@@ -19,39 +21,57 @@ namespace EasyPay.Api.Controllers
     public class ClientController : RESTFulController
     {
         private readonly IClientProcessingService clientProcessingService;
+        private readonly IClientService clientService;
 
-        public ClientController(IClientProcessingService clientProcessingService)
+        public ClientController(IClientProcessingService clientProcessingService, IClientService clientService)
         {
             this.clientProcessingService = clientProcessingService;
+            this.clientService = clientService;
         }
 
-        [HttpPost]
-        public async ValueTask<ActionResult<string>> PostClientAsync(Client client)
+        [HttpPost("register")]
+        public async ValueTask<ActionResult<Client>> RegisterClientAsync(Client client, string password)
         {
-            try
-            {
-                var accountNumber = await this.clientProcessingService.RegisterClientWithAccountAsync(client);
-
-                return Ok("Your accountNumber: " + accountNumber);
-            }
-            catch (ClientValidationException clientValidationException)
-            {
-                return BadRequest(clientValidationException.InnerException);
-            }
-            catch (ClientDependencyValidationException dependencyValidationException)
-                when (dependencyValidationException.InnerException is AlreadyExistsClientException)
-            {
-                return Conflict(dependencyValidationException.InnerException);
-            }
-            catch (ClientDependencyException dependencyException)
-            {
-                return InternalServerError(dependencyException.InnerException);
-            }
-            catch (ClientServiceException serviceException)
-            {
-                return InternalServerError(serviceException.InnerException);
-            }
+            var response = await this.clientProcessingService.RegisterClientWithAccountAsync(client, password);
+            
+            return Ok(response);
         }
+
+        [HttpPost("login")]
+        public async ValueTask<ActionResult<Client>> LoginClientAsync(Client client, string password)
+        {
+            var response = await this.clientProcessingService.LogingClientAsync(client, password);
+
+            return Ok(response);
+        }
+
+        //[HttpPost]
+        //public async ValueTask<ActionResult<string>> PostClientAsync(Client client)
+        //{
+        //    try
+        //    {
+        //        var accountNumber = await this.clientProcessingService.RegisterClientWithAccountAsync(client);
+
+        //        return Ok("Your accountNumber: " + accountNumber);
+        //    }
+        //    catch (ClientValidationException clientValidationException)
+        //    {
+        //        return BadRequest(clientValidationException.InnerException);
+        //    }
+        //    catch (ClientDependencyValidationException dependencyValidationException)
+        //        when (dependencyValidationException.InnerException is AlreadyExistsClientException)
+        //    {
+        //        return Conflict(dependencyValidationException.InnerException);
+        //    }
+        //    catch (ClientDependencyException dependencyException)
+        //    {
+        //        return InternalServerError(dependencyException.InnerException);
+        //    }
+        //    catch (ClientServiceException serviceException)
+        //    {
+        //        return InternalServerError(serviceException.InnerException);
+        //    }
+        //}
 
         [HttpGet("ById")]
         public async ValueTask<ActionResult<Client>> GetClientByIdAsync(Guid clientId)

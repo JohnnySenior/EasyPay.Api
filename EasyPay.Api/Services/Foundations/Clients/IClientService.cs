@@ -12,6 +12,8 @@ namespace EasyPay.Api.Services.Foundations.Clients
 {
     public interface IClientService
     {
+        ValueTask<string> LoginClientAsync(string accountNumber, string password);
+        ValueTask<Client> RegisterClientAsync(Client client, string password);
         /// <exception cref="Models.Clients.Exceptions.ClientValidationException"></exception>
         /// <exception cref="Models.Clients.Exceptions.ClientDependencyValidationException"></exception>
         /// <exception cref="Models.Clients.Exceptions.ClientDependencyException"></exception>

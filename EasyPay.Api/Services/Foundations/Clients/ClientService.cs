@@ -29,6 +29,32 @@ namespace EasyPay.Api.Services.Foundations.Clients
             this.loggingBroker = loggingBroker;
         }
 
+        public async ValueTask<Client> RegisterClientAsync(Client client, string password)
+        {
+            CreatePasswordHash(password, out byte[] passwordHash, out byte[] passwordSalt);
+
+            client.PasswordHash = passwordHash;
+            client.PasswordSalt = passwordSalt;
+
+            return await this.storageBroker.RegisterAsync(client);
+        }
+
+        public async ValueTask<string> LoginClientAsync(string login, string password)
+        {
+            var maybeClient =  await this.storageBroker.LoginAsync(login);
+
+            if(maybeClient == null)
+            {
+                throw new Exception("Client not found.");
+            }
+            else if(!VerifyPasswordHash(password, maybeClient.PasswordHash, maybeClient.PasswordSalt))
+            {
+                throw new Exception("Wrong password");
+            }
+
+            return this.storageBroker.CreateToken(maybeClient);
+        }
+
         public ValueTask<Client> AddClientAsync(Client client) =>
         TryCatch(async () =>
         {
@@ -77,5 +103,23 @@ namespace EasyPay.Api.Services.Foundations.Clients
 
              return await this.storageBroker.DeleteClientAsync(maybeclient);
          });
+
+        private void CreatePasswordHash(string password, out byte[] passwordHash, out byte[] passwordSalt)
+        {
+            using(var hmac = new System.Security.Cryptography.HMACSHA512())
+            {
+                passwordSalt = hmac.Key;
+                passwordHash = hmac.ComputeHash(System.Text.Encoding.UTF8.GetBytes(password));
+            }
+        }
+
+        private bool VerifyPasswordHash(string password, byte[] passwordHash, byte[] passwordSalt)
+        {
+            using (var hmac = new System.Security.Cryptography.HMACSHA512(passwordSalt))
+            {
+                var computedHash = hmac.ComputeHash(System.Text.Encoding.UTF8.GetBytes(password));
+                return computedHash.SequenceEqual(passwordHash);
+            }
+        }
     }
 }

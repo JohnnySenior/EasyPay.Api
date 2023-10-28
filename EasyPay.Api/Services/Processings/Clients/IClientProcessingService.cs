@@ -12,11 +12,12 @@ namespace EasyPay.Api.Services.Processings.Clients
 {
     public interface IClientProcessingService
     {
+        ValueTask<string> LogingClientAsync(Client client, string password);
         /// <exception cref="Models.Clients.Exceptions.ClientValidationException"></exception>
         /// <exception cref="Models.Clients.Exceptions.ClientDependencyValidationException"></exception>
         /// <exception cref="Models.Clients.Exceptions.ClientDependencyException"></exception>
         /// <exception cref="Models.Clients.Exceptions.ClientServiceException"></exception>
-        ValueTask<string> RegisterClientWithAccountAsync(Client client);
+        ValueTask<string> RegisterClientWithAccountAsync(Client client, string password);
         /// <exception cref="Models.Clients.Exceptions.ClientDependencyException"></exception>
         /// <exception cref="Models.Clients.Exceptions.ClientServiceException"></exception>     
         IQueryable<Client> RetrieveAllClients();

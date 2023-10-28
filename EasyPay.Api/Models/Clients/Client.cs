@@ -24,5 +24,9 @@ namespace EasyPay.Api.Models.Clients
         public string Address { get; set; }
         [JsonIgnore]
         public List<Account> Accounts { get; set; }
+        [JsonIgnore]
+        public byte[] PasswordHash { get; set; } = new byte[0];
+        [JsonIgnore]
+        public byte[] PasswordSalt { get; set; } = new byte[0];
     }
 }
